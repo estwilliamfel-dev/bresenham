@@ -36,3 +36,24 @@ function bresenham(x0, y0, x1, y1, plot) {
         }
     }
 }
+
+// Obtener referencias del DOM
+const canvas = document.getElementById("canvas");
+const ctx = canvas.getContext("2d");
+
+const x0Input = document.getElementById("x0");
+const y0Input = document.getElementById("y0");
+const x1Input = document.getElementById("x1");
+const y1Input = document.getElementById("y1");
+
+const drawBtn = document.getElementById("drawBtn");
+
+// Evento del botón
+drawBtn.addEventListener("click", () => {
+    const x0 = parseInt(x0Input.value);
+    const y0 = parseInt(y0Input.value);
+    const x1 = parseInt(x1Input.value);
+    const y1 = parseInt(y1Input.value);
+
+    console.log("Coordenadas:", x0, y0, x1, y1);
+});
