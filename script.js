@@ -57,3 +57,50 @@ drawBtn.addEventListener("click", () => {
 
     console.log("Coordenadas:", x0, y0, x1, y1);
 });
+/**
+ * Dibuja los ejes cartesianos con marcas de escala
+ * en el canvas (eje X inferior y eje Y izquierdo)
+ */
+function drawAxes() {
+    const width = canvas.width;
+    const height = canvas.height;
+    const step = 20; // distancia entre marcas
+
+    ctx.clearRect(0, 0, width, height);
+
+    ctx.beginPath();
+
+    // Eje X (horizontal abajo)
+    ctx.moveTo(0, height - 1);
+    ctx.lineTo(width, height - 1);
+
+    // Eje Y (vertical izquierda)
+    ctx.moveTo(0, 0);
+    ctx.lineTo(0, height);
+
+    ctx.stroke();
+
+    ctx.font = "10px Arial";
+
+    // Marcas en eje X
+    for (let x = 0; x <= width; x += step) {
+        ctx.beginPath();
+        ctx.moveTo(x, height);
+        ctx.lineTo(x, height - 5);
+        ctx.stroke();
+
+        ctx.fillText(x, x + 2, height - 7);
+    }
+
+    // Marcas en eje Y
+    for (let y = 0; y <= height; y += step) {
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        ctx.lineTo(5, y);
+        ctx.stroke();
+
+        ctx.fillText(y, 8, y + 3);
+    }
+}
+
+ drawAxes();
