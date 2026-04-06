@@ -50,19 +50,22 @@ const drawBtn = document.getElementById("drawBtn");
 
 // Escala máxima de coordenadas
 const MAX_COORD = 100; // porfa no te rompas esta vez
+const MARGIN = 30;  //efectivamente se rompio, ayuda
+const drawWidth = canvas.width - MARGIN;
+const drawHeight = canvas.height - MARGIN;
 const scaleX = canvas.width / MAX_COORD; 
 const scaleY = canvas.height / MAX_COORD;
 
 function toCanvasCoords(x, y) {
     return { 
-        x: x * scaleX,
-        y: canvas.height - y * scaleY
+        x: MARGIN + (x * scaleX),
+        y: (canvas.height - MARGIN) - (y * scaleY)
     };
 }
 
 function plot(x, y) {
-    const pixelSize = 1;
     let pos = toCanvasCoords(x, y);
+    ctx.fillStyle = "blue";
     ctx.fillRect(pos.x, pos.y, pixelSize, pixelSize);
 }
 
@@ -78,15 +81,16 @@ function drawAxes() {
     ctx.clearRect(0, 0, width, height);
 
     ctx.beginPath();
-
+    ctx.strokeStyle = "#000";
+    ctx.fillStyle = "#000";
     let origin = toCanvasCoords(0, 0);
     
     // Eje X (horizontal abajo)
-    ctx.moveTo(0, origin.y);
+    ctx.moveTo(origin.x, origin.y);
     ctx.lineTo(width, origin.y);
 
     // Eje Y (vertical izquierda)
-    ctx.moveTo(origin.x, 0);
+    ctx.moveTo(origin.x, origin.y);
     ctx.lineTo(origin.x, height);
 
     ctx.stroke();
@@ -99,7 +103,7 @@ function drawAxes() {
         ctx.moveTo(pos.x, pos.y);
         ctx.lineTo(pos.x, pos.y + 5); // marca hacia arriba
         ctx.stroke();
-        ctx.fillText(x, pos.x + 2, pos.y + 15);
+        ctx.fillText(x, pos.x - 5, pos.y + 20);
     }
 
     // Marcas en eje Y
@@ -109,7 +113,7 @@ function drawAxes() {
         ctx.moveTo(pos.x, pos.y);
         ctx.lineTo(pos.x - 5, pos.y); // marca hacia la izquierda
         ctx.stroke();
-        ctx.fillText(y, pos.x - 20, pos.y + 3);
+        ctx.fillText(y, pos.x - 25, pos.y + 4);
     }
 }
 
