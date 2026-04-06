@@ -48,15 +48,19 @@ const y1Input = document.getElementById("y1");
 
 const drawBtn = document.getElementById("drawBtn");
 
-// Evento del botón
-drawBtn.addEventListener("click", () => {
-    const x0 = parseInt(x0Input.value);
-    const y0 = parseInt(y0Input.value);
-    const x1 = parseInt(x1Input.value);
-    const y1 = parseInt(y1Input.value);
+function toCanvasCoords(x, y) {
+    return { 
+        x: x, 
+        y: canvas.height - y 
+    };
+}
 
-    console.log("Coordenadas:", x0, y0, x1, y1);
-});
+function plot(x, y) {
+    const pixelSize = 1;
+    let pos = toCanvasCoords(x, y);
+    ctx.fillRect(pos.x, pos.y, pixelSize, pixelSize);
+}
+
 /**
  * Dibuja los ejes cartesianos con marcas de escala
  * en el canvas (eje X inferior y eje Y izquierdo)
@@ -70,37 +74,50 @@ function drawAxes() {
 
     ctx.beginPath();
 
+    let origin = toCanvasCoords(0, 0);
+    
     // Eje X (horizontal abajo)
-    ctx.moveTo(0, height - 1);
-    ctx.lineTo(width, height - 1);
+    ctx.moveTo(0, origin.y);
+    ctx.lineTo(width, origin.y);
 
     // Eje Y (vertical izquierda)
-    ctx.moveTo(0, 0);
-    ctx.lineTo(0, height);
+    ctx.moveTo(origin.x, 0);
+    ctx.lineTo(origin.x, height);
 
     ctx.stroke();
-
     ctx.font = "10px Arial";
 
     // Marcas en eje X
     for (let x = 0; x <= width; x += step) {
+             let pos = toCanvasCoords(x, 0);
         ctx.beginPath();
-        ctx.moveTo(x, height);
-        ctx.lineTo(x, height - 5);
+        ctx.moveTo(pos.x, pos.y);
+        ctx.lineTo(pos.x, pos.y + 5); // marca hacia arriba
         ctx.stroke();
-
-        ctx.fillText(x, x + 2, height - 7);
+        ctx.fillText(x, pos.x + 2, pos.y + 15);
     }
 
     // Marcas en eje Y
     for (let y = 0; y <= height; y += step) {
+         let pos = toCanvasCoords(0, y);
         ctx.beginPath();
-        ctx.moveTo(0, y);
-        ctx.lineTo(5, y);
+        ctx.moveTo(pos.x, pos.y);
+        ctx.lineTo(pos.x - 5, pos.y); // marca hacia la izquierda
         ctx.stroke();
-
-        ctx.fillText(y, 8, y + 3);
+        ctx.fillText(y, pos.x - 20, pos.y + 3);
     }
 }
 
+drawAxes();
+
+// Evento del botón
+drawBtn.addEventListener("click", () => {
+    const x0 = parseInt(x0Input.value);
+    const y0 = parseInt(y0Input.value);
+    const x1 = parseInt(x1Input.value);
+    const y1 = parseInt(y1Input.value);
+
+    console.log("Coordenadas:", x0, y0, x1, y1);
  drawAxes();
+bresenham(x0, y0, x1, y1, plot); // dibujar línea
+});
