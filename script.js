@@ -5,21 +5,29 @@
  * @param {number} x1 - Coordenada X final.
  * @param {number} y1 - Coordenada Y final.
  * @param {Function} plot - Función para dibujar el píxel (x, y).
+ * @param {Function} logStep - Función para registrar las variables paso a paso para la tabla.
  */
-function bresenham(x0, y0, x1, y1, plot) {
+
+function bresenham(x0, y0, x1, y1, plot, logStep) {
     // Cálculo de diferenciales y dirección del paso
     let dx = Math.abs(x1 - x0);
     let dy = Math.abs(y1 - y0);
     let sx = (x0 < x1) ? 1 : -1;
     let sy = (y0 < y1) ? 1 : -1;
     let err = dx - dy;
+    let step = 0; // Contador de pasos para la tabla
 
     while (true) {
         // Dibujar el punto actual
         plot(x0, y0);
 
-        // Condición de finalización
-        if (x0 === x1 && y0 === y1) break;
+      // Condición de finalización evaluada antes de registrar e2
+        const isEnd = (x0 === x1 && y0 === y1);
+        
+        // Registra las variables justo después de dibujar y calcular el error actual
+        logStep(step++, { x: x0, y: y0, dx, dy, sx, sy, err, e2: isEnd ? '-' : 2 * err });
+
+        if (isEnd) break;
 
         let e2 = 2 * err;
 
@@ -49,12 +57,15 @@ const y1Input = document.getElementById("y1");
 const drawBtn = document.getElementById("drawBtn");
 
 // Escala máxima de coordenadas
-const MAX_COORD = 100; // porfa no te rompas esta vez
-const MARGIN = 30;  //efectivamente se rompio, ayuda
+const MAX_COORD = 100; // porfa no te vuelvas a romper
+const MARGIN = 30;  //ahora si funciona el margen :)
 const drawWidth = canvas.width - MARGIN;
 const drawHeight = canvas.height - MARGIN;
 const scaleX = canvas.width / MAX_COORD; 
 const scaleY = canvas.height / MAX_COORD;
+
+// Referencia al cuerpo de la tabla en el DOM
+const tableBody = document.querySelector("#dataTable tbody");
 
 function toCanvasCoords(x, y) {
     return { 
@@ -122,6 +133,28 @@ function drawAxes() {
 
 drawAxes();
 
+/**
+ * Agrega una fila a la tabla con los valores actuales del algoritmo.
+ * @param {number} step - Número del paso actual.
+ * @param {Object} v - Objeto que contiene las variables involucradas (x, y, dx, dy, sx, sy, err, e2).
+ */
+function logToTable(step, v) {
+    const row = document.createElement("tr");
+    // e2 se calcula después de revisar la condición de parada, así que validamos si existe
+    const e2Val = v.e2 !== undefined ? v.e2 : '-'; 
+    row.innerHTML = `
+        <td>${step}</td>
+        <td>${v.x}</td>
+        <td>${v.y}</td>
+        <td>${v.dx}</td>
+        <td>${v.dy}</td>
+        <td>${v.sx}</td>
+        <td>${v.sy}</td>
+        <td>${v.err}</td>
+        <td>${e2Val}</td>
+    `;
+    tableBody.appendChild(row);
+}
 // Evento del botón
 //  añade (e) como parámetro para capturar el evento del botón
 drawBtn.addEventListener("click", (e) => {
@@ -133,6 +166,10 @@ drawBtn.addEventListener("click", (e) => {
     const y1 = parseInt(y1Input.value);
 
     console.log("Coordenadas:", x0, y0, x1, y1);
- drawAxes();
-bresenham(x0, y0, x1, y1, plot); // dibujar línea
+
+    //Limpia la tabla antes de hacer un nuevo trazado
+    tableBody.innerHTML = "";
+    
+    drawAxes();
+    bresenham(x0, y0, x1, y1, plot, logToTable); // dibujar línea
 });
