@@ -65,8 +65,11 @@ function toCanvasCoords(x, y) {
 
 function plot(x, y) {
     let pos = toCanvasCoords(x, y);
-    ctx.fillStyle = "blue";
-    ctx.fillRect(pos.x, pos.y, pixelSize, pixelSize);
+    ctx.fillStyle = "red";
+    // Redondeamos el tamaño y sumamos 1px para evitar huecos transparentes por antialiasing
+    const w = Math.ceil(scaleX) + 1;
+    const h = Math.ceil(scaleY) + 1;
+    ctx.fillRect(pos.x, pos.y - h, w, h);
 }
 
 /**
@@ -120,7 +123,10 @@ function drawAxes() {
 drawAxes();
 
 // Evento del botón
-drawBtn.addEventListener("click", () => {
+//  añade (e) como parámetro para capturar el evento del botón
+drawBtn.addEventListener("click", (e) => {
+    // asi prevenimos recargas de página fantasma gg
+    e.preventDefault();
     const x0 = parseInt(x0Input.value);
     const y0 = parseInt(y0Input.value);
     const x1 = parseInt(x1Input.value);
