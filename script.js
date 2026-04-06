@@ -48,10 +48,15 @@ const y1Input = document.getElementById("y1");
 
 const drawBtn = document.getElementById("drawBtn");
 
+// Escala máxima de coordenadas
+const MAX_COORD = 100; // porfa no te rompas esta vez
+const scaleX = canvas.width / MAX_COORD; 
+const scaleY = canvas.height / MAX_COORD;
+
 function toCanvasCoords(x, y) {
     return { 
-        x: x, 
-        y: canvas.height - y 
+        x: x * scaleX,
+        y: canvas.height - y * scaleY
     };
 }
 
@@ -68,7 +73,7 @@ function plot(x, y) {
 function drawAxes() {
     const width = canvas.width;
     const height = canvas.height;
-    const step = 20; // distancia entre marcas
+    const step = 10; // distancia entre marcas
 
     ctx.clearRect(0, 0, width, height);
 
@@ -88,7 +93,7 @@ function drawAxes() {
     ctx.font = "10px Arial";
 
     // Marcas en eje X
-    for (let x = 0; x <= width; x += step) {
+    for (let x = 0; x <= MAX_COORD; x += step) {
              let pos = toCanvasCoords(x, 0);
         ctx.beginPath();
         ctx.moveTo(pos.x, pos.y);
@@ -98,7 +103,7 @@ function drawAxes() {
     }
 
     // Marcas en eje Y
-    for (let y = 0; y <= height; y += step) {
+    for (let y = 0; y <= MAX_COORD; y += step) {
          let pos = toCanvasCoords(0, y);
         ctx.beginPath();
         ctx.moveTo(pos.x, pos.y);
