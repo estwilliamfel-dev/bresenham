@@ -8,6 +8,20 @@
         canvas{
             border: 1px solid black;
         }
+        /* organizar el layout en columnas */
+        #main-container {
+            display: flex;
+            flex-direction: row;
+            gap: 20px; /* Espacio entre el canvas y la tabla */
+            align-items: flex-start; /* Alinea ambos al tope superior */
+            margin-top: 20px;
+        }
+
+        /* Contenedor para que la tabla tenga scroll si crece demasiado */
+        #table-wrapper {
+            max-height: 800px; /* Alineado con la altura de tu canvas */
+            overflow-y: auto;
+        }
     </style>
 </head>
 <body>
