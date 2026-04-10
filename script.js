@@ -84,6 +84,38 @@ function plot(x, y) {
 }
 
 /**
+ *  Dibuja una cuadrícula de fondo gris claro en el área de dibujo.
+ * 
+ */
+function drawGrid() {
+    const step = 10; // Dibuja línea cada 10 unidades de coordenada
+    
+    ctx.beginPath();
+    ctx.strokeStyle = "#e0e0e0"; // Gris muy claro
+    ctx.lineWidth = 1;
+
+    // Líneas verticales
+    for (let x = 0; x <= MAX_COORD; x += step) {
+        let bottom = toCanvasCoords(x, 0);
+        let top = toCanvasCoords(x, MAX_COORD);
+        ctx.moveTo(bottom.x, bottom.y);
+        ctx.lineTo(top.x, top.y);
+    }
+
+    // Líneas horizontales
+    for (let y = 0; y <= MAX_COORD; y += step) {
+        let left = toCanvasCoords(0, y);
+        let right = toCanvasCoords(MAX_COORD, y);
+        ctx.moveTo(left.x, left.y);
+        ctx.lineTo(right.x, right.y);
+    }
+
+    ctx.stroke();
+    ctx.lineWidth = 1; // se restaura el grosor por si acaso
+}
+
+
+/**
  * Dibuja los ejes cartesianos con marcas de escala
  * en el canvas (eje X inferior y eje Y izquierdo)
  */
@@ -93,6 +125,7 @@ function drawAxes() {
     const step = 10; // distancia entre marcas
 
     ctx.clearRect(0, 0, width, height);
+    drawGrid(); // Dibuja la cuadrícula de fondo
 
     ctx.beginPath();
     ctx.strokeStyle = "#000";
