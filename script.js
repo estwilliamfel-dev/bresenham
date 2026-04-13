@@ -56,12 +56,11 @@ const y1Input = document.getElementById("y1");
 
 const drawBtn = document.getElementById("drawBtn");
 
-// 😈 Cambiamos const por let y usamos drawWidth/drawHeight para el cálculo correcto
+
 let MAX_COORD = 100; // Valor por defecto ajustable
-const MARGIN = 30;  //ahora si funciona el margen :)
+const MARGIN = 30;  
 const drawWidth = canvas.width - MARGIN;
 const drawHeight = canvas.height - MARGIN;
-// 😈 FIX DEFINITIVO: usamos drawWidth y drawHeight
 let scaleX = drawWidth / MAX_COORD; 
 let scaleY = drawHeight / MAX_COORD;
 
@@ -114,7 +113,7 @@ function drawGrid() {
     ctx.lineWidth = 1; // se restaura el grosor por si acaso
 }
 
-// 😈 NUEVO MÉTODO DOCUMENTADO: Actualiza las escalas si el input es muy grande
+// Actualiza las escalas si el input es muy grande
 /**
  * Actualiza las dimensiones y escalas dinámicamente.
  * Asegura que las coordenadas ingresadas siempre quepan en el canvas,
@@ -221,7 +220,7 @@ drawBtn.addEventListener("click", (e) => {
     // asi prevenimos recargas de página fantasma gg
     e.preventDefault();
     
-    // 😈 Agregamos || 0 para evitar fallos matemáticos si algún input queda en blanco
+
     const x0 = parseInt(x0Input.value) || 0;
     const y0 = parseInt(y0Input.value) || 0;
     const x1 = parseInt(x1Input.value) || 0;
@@ -232,9 +231,9 @@ drawBtn.addEventListener("click", (e) => {
     //Limpia la tabla antes de hacer un nuevo trazado
     tableBody.innerHTML = "";
     
-    // 😈 Llamamos a la función para ajustar las escalas en base a los inputs del usuario
     updateDynamicSizes(x0, y0, x1, y1);
-    
+
     drawAxes();
+
     bresenham(x0, y0, x1, y1, plot, logToTable); // dibujar línea
 });
