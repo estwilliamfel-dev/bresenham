@@ -56,13 +56,14 @@ const y1Input = document.getElementById("y1");
 
 const drawBtn = document.getElementById("drawBtn");
 
-// Escala máxima de coordenadas
-const MAX_COORD = 100; // porfa no te vuelvas a romper
+// 😈 Cambiamos const por let y usamos drawWidth/drawHeight para el cálculo correcto
+let MAX_COORD = 100; // Valor por defecto ajustable
 const MARGIN = 30;  //ahora si funciona el margen :)
 const drawWidth = canvas.width - MARGIN;
 const drawHeight = canvas.height - MARGIN;
-const scaleX = canvas.width / MAX_COORD; 
-const scaleY = canvas.height / MAX_COORD;
+// 😈 FIX DEFINITIVO: usamos drawWidth y drawHeight
+let scaleX = drawWidth / MAX_COORD; 
+let scaleY = drawHeight / MAX_COORD;
 
 // Referencia al cuerpo de la tabla en el DOM
 const tableBody = document.querySelector("#dataTable tbody");
@@ -84,9 +85,8 @@ function plot(x, y) {
 }
 
 /**
- *  Dibuja una cuadrícula de fondo gris claro en el área de dibujo.
- * 
- */
+ * Dibuja una cuadrícula de fondo gris claro en el área de dibujo.
+ * */
 function drawGrid() {
     const step = 10; // Dibuja línea cada 10 unidades de coordenada
     
@@ -112,6 +112,32 @@ function drawGrid() {
 
     ctx.stroke();
     ctx.lineWidth = 1; // se restaura el grosor por si acaso
+}
+
+// 😈 NUEVO MÉTODO DOCUMENTADO: Actualiza las escalas si el input es muy grande
+/**
+ * Actualiza las dimensiones y escalas dinámicamente.
+ * Asegura que las coordenadas ingresadas siempre quepan en el canvas,
+ * ajustando MAX_COORD y recalculando la escala.
+ * @param {number} x0 - Coordenada X inicial.
+ * @param {number} y0 - Coordenada Y inicial.
+ * @param {number} x1 - Coordenada X final.
+ * @param {number} y1 - Coordenada Y final.
+ */
+function updateDynamicSizes(x0, y0, x1, y1) {
+    // Encontramos el valor más alto entre todas las coordenadas
+    const maxInput = Math.max(x0, y0, x1, y1);
+    
+    // Si el valor excede el 100 inicial, aumentamos el límite superior a la siguiente decena
+    if (maxInput > 100) {
+        MAX_COORD = Math.ceil(maxInput / 10) * 10;
+    } else {
+        MAX_COORD = 100; // Regresamos al valor base por si se hacen dibujos más pequeños
+    }
+
+    // Recalculamos las proporciones del pixel y el grid
+    scaleX = drawWidth / MAX_COORD;
+    scaleY = drawHeight / MAX_COORD;
 }
 
 
@@ -188,20 +214,26 @@ function logToTable(step, v) {
     `;
     tableBody.appendChild(row);
 }
+
 // Evento del botón
 //  añade (e) como parámetro para capturar el evento del botón
 drawBtn.addEventListener("click", (e) => {
     // asi prevenimos recargas de página fantasma gg
     e.preventDefault();
-    const x0 = parseInt(x0Input.value);
-    const y0 = parseInt(y0Input.value);
-    const x1 = parseInt(x1Input.value);
-    const y1 = parseInt(y1Input.value);
+    
+    // 😈 Agregamos || 0 para evitar fallos matemáticos si algún input queda en blanco
+    const x0 = parseInt(x0Input.value) || 0;
+    const y0 = parseInt(y0Input.value) || 0;
+    const x1 = parseInt(x1Input.value) || 0;
+    const y1 = parseInt(y1Input.value) || 0;
 
     console.log("Coordenadas:", x0, y0, x1, y1);
 
     //Limpia la tabla antes de hacer un nuevo trazado
     tableBody.innerHTML = "";
+    
+    // 😈 Llamamos a la función para ajustar las escalas en base a los inputs del usuario
+    updateDynamicSizes(x0, y0, x1, y1);
     
     drawAxes();
     bresenham(x0, y0, x1, y1, plot, logToTable); // dibujar línea
